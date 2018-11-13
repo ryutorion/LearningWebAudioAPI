@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8"/>
+	<title>Web Audio APIの学習 - sin波の再生</title>
+</head>
+<body>
+	<input type="button" value="再生" onclick="play();"/>
+	<script>
+const context = new AudioContext();
+let oscillator = context.createOscillator();
+oscillator.connect(context.destination);
+
+let playing = false;
+function play()
+{
+	if(!playing)
+	{
+		oscillator.addEventListener("ended", function(){
+			oscillator.disconnect(context.destination);
+			oscillator = context.createOscillator();
+			oscillator.connect(context.destination);
+			playing = false;
+		});
+
+		playing = true;
+		oscillator.start();
+		oscillator.stop(context.currentTime + 1);
+	}
+}
+	</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8"/>
+	<title>Web Audio APIの学習 - クリックノイズの除去</title>
+</head>
+<body>
+	<input type="button" value="再生" onclick="play();"/>
+	<script>
+const context = new AudioContext();
+const gain = context.createGain();
+gain.connect(context.destination);
+let oscillator = context.createOscillator();
+oscillator.connect(gain);
+
+let playing = false;
+function play()
+{
+	if(!playing)
+	{
+		oscillator.addEventListener("ended", function(){
+			oscillator.disconnect();
+			oscillator = context.createOscillator();
+			oscillator.connect(gain);
+			playing = false;
+		});
+
+		playing = true;
+		oscillator.start();
+		gain.gain.setValueCurveAtTime([0, gain.gain.defaultValue], context.currentTime, 0.03);
+		gain.gain.setValueCurveAtTime([gain.gain.defaultValue, 0], context.currentTime + 0.97, 0.03);
+		oscillator.stop(context.currentTime + 1);
+	}
+}
+	</script>
+</body>
+</html>
